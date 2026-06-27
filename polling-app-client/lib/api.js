@@ -1,7 +1,7 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
-export const createPoll = async (question, options,isPublic,password) => {
-  const res = await fetch(`${BASE_URL}api/polls`, {
+export const createPoll = async (question, options, isPublic, password) => {
+  const res = await fetch(`${BASE_URL}/polls`, {  // ✅ just /polls
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question, options, isPublic, password }),
@@ -10,12 +10,12 @@ export const createPoll = async (question, options,isPublic,password) => {
 };
 
 export const getPoll = async (id) => {
-  const res = await fetch(`${BASE_URL}api/polls/${id}`);
+  const res = await fetch(`${BASE_URL}/polls/${id}`); // ✅
   return res.json();
 };
 
 export const submitVote = async (id, optionIndex) => {
-  const res = await fetch(`${BASE_URL}api/polls/${id}/vote`, {
+  const res = await fetch(`${BASE_URL}/polls/${id}/vote`, { // ✅
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ optionIndex }),
@@ -24,7 +24,7 @@ export const submitVote = async (id, optionIndex) => {
 };
 
 export const closePoll = async (id, password) => {
-  const res = await fetch(`${BASE_URL}api/polls/${id}/close`, {
+  const res = await fetch(`${BASE_URL}/polls/${id}/close`, { // ✅
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password }),
@@ -33,6 +33,6 @@ export const closePoll = async (id, password) => {
 };
 
 export const getPublicPolls = async () => {
-  const res = await fetch(`${BASE_URL}api/polls/public`);
+  const res = await fetch(`${BASE_URL}/polls/public`); // ✅
   return res.json();
 };
