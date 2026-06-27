@@ -1,10 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const {createPoll, test, getSinglePoll, submitVote} = require('../controller/pollController');
+const {createPoll, test, getSinglePoll, submitVote,getPublicPolls,closePoll} = require('../controller/pollController');
 
 
 /**
  * @swagger
+ * /api/polls/public:
+ *   get:
+ *     summary: Get all public polls
+ *     responses:
+ *       200:
+ *         description: List of public polls
+ *
+ * /api/polls/{id}/close:
+ *   patch:
+ *     summary: Close a poll — end voting
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Poll closed successfully
+ *       400:
+ *         description: Poll is already closed
+ *       404:
+ *         description: Poll not found
+ *
  * /api/polls:
  *   post:
  *     summary: Create a new poll
@@ -21,6 +45,8 @@ const {createPoll, test, getSinglePoll, submitVote} = require('../controller/pol
  *                 type: array
  *                 items:
  *                   type: string
+ *               isPublic:
+ *                 type: boolean
  *     responses:
  *       201:
  *         description: Poll created successfully
@@ -62,10 +88,10 @@ const {createPoll, test, getSinglePoll, submitVote} = require('../controller/pol
  *       200:
  *         description: Vote submitted successfully
  */
-
-router.get('/test', test);
 router.post('/polls', createPoll);
+router.get('/polls/public', getPublicPolls);
 router.get('/polls/:id', getSinglePoll);
 router.post('/polls/:id/vote', submitVote);
+router.patch('/polls/:id/close', closePoll);
 
 module.exports = router;

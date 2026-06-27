@@ -14,6 +14,19 @@ const pollSchema = new mongoose.Schema({
       }
     }
   ],
+  isPublic: {
+    type: Boolean,
+    default: true
+  },
+  status: {
+    type: String,
+    enum: ["active", "closed"],
+    default: "active"
+  },
+  password: {
+  type: String,
+  required: true
+},
   createdAt: {
     type: Date,
     default: Date.now

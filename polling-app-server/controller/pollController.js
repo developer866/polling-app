@@ -1,11 +1,16 @@
 const Poll = require("../models/Poll");
-
+const bcrypt = require("bcrypt");
 const createPoll = async (req, res) => {
   try {
-    const { question, options } = req.body;
+    const { question, options,isPublic,password } = req.body;
+    // hashed password 
+    const hashedPAssword = password ? await bcrypt.hash(password, 10) : null;
+
     const poll = new Poll({
       question,
       options: options.map((option) => ({ text: option })),
+      isPublic,
+      password:hashedPAssword
     });
     await poll.save();
     res.status(201).json(poll);
@@ -58,4 +63,42 @@ const test = async (req, res) => {
     }
 };
 
-module.exports = { createPoll, test, getSinglePoll, submitVote };
+const closePoll = async (req, res) => {
+  try {
+    const { password } = req.body;
+    const poll = await Poll.findById(req.params.id);
+
+    if (!poll) return res.status(404).json({ message: "Poll not found" });
+
+    if (poll.status === "closed") {
+      return res.status(400).json({ message: "Poll is already closed" });
+    }
+
+    // Verify password
+    const isMatch = await bcrypt.compare(password, poll.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    poll.status = "closed";
+    await poll.save();
+
+    const io = req.app.get("io");
+    io.to(req.params.id).emit("poll-closed", poll);
+
+    res.json({ message: "Poll closed successfully", poll });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// Get all public polls
+const getPublicPolls = async (req, res) => {
+  try {
+    const polls = await Poll.find({ isPublic: true }).sort({ createdAt: -1 });
+    res.json(polls);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { createPoll, test, getSinglePoll, submitVote, closePoll, getPublicPolls };
