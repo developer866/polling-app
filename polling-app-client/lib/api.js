@@ -1,4 +1,4 @@
-const BASE_URL = Process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export const createPoll = async (question, options,isPublic,password) => {
   const res = await fetch(`${BASE_URL}api/polls`, {
