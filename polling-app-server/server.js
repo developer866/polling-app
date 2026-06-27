@@ -24,6 +24,11 @@ app.use("/api", pollRoutes);
 // Swagger
 setupSwagger(app);
 
+// Test
+app.get("/", (req, res) => {
+  res.send("Polling app server is running");
+});
+
 // Connect DB then start server
 connectDB().then(() => {
   server.listen(5000, () => {
